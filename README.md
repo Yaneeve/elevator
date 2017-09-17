@@ -34,6 +34,16 @@ communication with the controller and see if the added complexity makes a real d
 I gather from the previous challenges that a usual 4 hours is given to the task, and that other coders have also not counted the 
  research time and preamble writing as part of the 4. I will try to log what I had been able to complete in 4 hours. I will also try to
  log the complete amount of time I spent on the project
+
+## notes
+ - I modify the API suggested in the original challenge to be IMO more functional
+   This [blog post](https://underscore.io/blog/posts/2017/06/02/uniting-church-and-state.html) explains that 
+>   The Church encoding gives us a way to relate the OO and FP representation.
+ - I would like to propose that an elevator has a state and a function on that state produces
+ and elevator within the same or a different state. I wonder if a state monad might help or obstruct the design
+                                          
+
+ 
  
 ## tasks
 - [ ] single elevator
