@@ -41,6 +41,8 @@ I gather from the previous challenges that a usual 4 hours is given to the task,
 >   The Church encoding gives us a way to relate the OO and FP representation.
  - I would like to propose that an elevator has a state and a function on that state produces
  and elevator within the same or a different state. I wonder if a state monad might help or obstruct the design
+ - A trivial one: I would like to split the request into direction (up/down) and then to floor. This seems more 
+ realistic in the simple scenario
                                           
 
  
@@ -51,6 +53,7 @@ I gather from the previous challenges that a usual 4 hours is given to the task,
     - [ ] SSF, Shortest Seek First or Nearest Car
     - [ ] SSF but try to avoid starvation
 - [ ] multiple elevators
-    - [ ] ???
+    - [ ] Simple up/down buttons
+    - [ ] dispatcher (enter floor while requesting an elavator)
     - [ ] async
     - [ ] akka
