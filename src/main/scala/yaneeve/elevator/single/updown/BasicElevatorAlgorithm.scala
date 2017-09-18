@@ -28,7 +28,7 @@ class BasicElevatorAlgorithm extends DispatchAlgorithm {
   override def step(dispatcher: Dispatcher): Dispatcher = {
 
     dispatcher.elevator.direction match {
-      case Idle =>
+      case Idle => // when idle process the next request
         val maybeUp = dispatcher.upRequests.headOption
         val maybeDown = dispatcher.downRequests.headOption
         val destination = (maybeDown, maybeUp) match {
@@ -45,14 +45,14 @@ class BasicElevatorAlgorithm extends DispatchAlgorithm {
           case _ => NoDestination
         }
         dispatcher.modify(_.elevator.destination).setTo(destination)
-      case Up =>
+      case Up => // move up, clear closest up request from ordered up set
         val nextFloor: Floor = dispatcher.elevator.floor + 1
         val popRequest = dispatcher.upRequests.headOption.collect{
           case PickupRequest(_, FloorDestination(dest)) if dest == nextFloor => true
         }.exists(identity)
         dispatcher.modify(_.elevator.floor).setTo(nextFloor).
           modify(_.upRequests).setToIf(popRequest)(dispatcher.upRequests.tail)
-      case Down =>
+      case Down => // move down, clear closest down request from ordered down set
         val nextFloor: Floor = dispatcher.elevator.floor - 1
         val popRequest = dispatcher.downRequests.headOption.collect {
           case PickupRequest(_, FloorDestination(dest)) if dest == nextFloor => true
