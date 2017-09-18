@@ -1,4 +1,4 @@
-package yaneeve.elevator.single
+package yaneeve.elevator.single.updown
 
 /**
   * Created by yaneeve on 9/17/17.

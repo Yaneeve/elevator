@@ -1,7 +1,7 @@
 package yaneeve.elevator.multiple
 
 import yaneeve.elevator.ElevatorState
-import yaneeve.elevator.single.PickupRequest
+import yaneeve.elevator.single.updown.PickupRequest
 
 import scala.collection.immutable.Queue
 
