@@ -7,4 +7,6 @@ trait DispatchAlgorithm {
 
   def dispatch(dispatcher: Dispatcher, pickupRequest: PickupRequest): Dispatcher
 
+  def step(dispatcher: Dispatcher): Dispatcher
+
 }

@@ -1,6 +1,9 @@
 package yaneeve.elevator
 package single.updown
 
+import math.{min, abs}
+
+import com.softwaremill.quicklens._
 /**
   * Created by yaneeve on 9/18/17.
   */
@@ -20,5 +23,43 @@ class BasicElevatorAlgorithm extends DispatchAlgorithm {
       case Idle => ??? // choose closest request
     }
     ???
+  }
+
+  override def step(dispatcher: Dispatcher): Dispatcher = {
+
+    dispatcher.elevator.direction match {
+      case Idle =>
+        val maybeUp = dispatcher.upRequests.headOption
+        val maybeDown = dispatcher.downRequests.headOption
+        val destination = (maybeDown, maybeUp) match {
+          case (Some(PickupRequest(_, dest)), None) =>
+            dest
+          case (None, Some(PickupRequest(_, dest))) =>
+            dest
+          case (Some(PickupRequest(_, destDown@FloorDestination(down))), Some(PickupRequest(_, destUp@FloorDestination(up)))) =>
+            val current = dispatcher.elevator.floor
+            val distDown = current - down
+            val distUp = up - current
+            if (distUp > distDown) destDown
+            else destUp
+          case _ => NoDestination
+        }
+        dispatcher.modify(_.elevator.destination).setTo(destination)
+      case Up =>
+        val nextFloor: Floor = dispatcher.elevator.floor + 1
+        val popRequest = dispatcher.upRequests.headOption.collect{
+          case PickupRequest(_, FloorDestination(dest)) if dest == nextFloor => true
+        }.exists(identity)
+        dispatcher.modify(_.elevator.floor).setTo(nextFloor).
+          modify(_.upRequests).setToIf(popRequest)(dispatcher.upRequests.tail)
+      case Down =>
+        val nextFloor: Floor = dispatcher.elevator.floor - 1
+        val popRequest = dispatcher.downRequests.headOption.collect {
+          case PickupRequest(_, FloorDestination(dest)) if dest == nextFloor => true
+        }.exists(identity)
+        dispatcher.modify(_.elevator.floor).setTo(nextFloor).
+          modify(_.downRequests).setToIf(popRequest)(dispatcher.downRequests.tail)
+    }
+
   }
 }

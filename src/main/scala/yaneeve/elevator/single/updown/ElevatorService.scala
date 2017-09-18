@@ -15,26 +15,32 @@ class ElevatorService {
 //    }
 //  }
 
-  def step(dispatcher: Dispatcher): Dispatcher = {
-    val stepped = dispatcher.elevator.direction match {
-      case Idle => dispatcher
-      case Up =>
-        val nextFloor: Floor = dispatcher.elevator.floor + 1
-        val popRequest = dispatcher.upRequests.head.destination match {
-          case FloorDestination(dest) if dest == nextFloor => true
-          case _ => false
-        }
-        dispatcher.modify(_.elevator.floor).setTo(nextFloor).
-        modify(_.upRequests).setToIf(popRequest)(dispatcher.upRequests.tail)
-      case Down =>
-        val nextFloor: Floor = dispatcher.elevator.floor - 1
-        val popRequest = dispatcher.downRequests.head.destination match {
-          case FloorDestination(dest) if dest == nextFloor => true
-          case _ => false
-        }
-        dispatcher.modify(_.elevator.floor).setTo(nextFloor).
-          modify(_.downRequests).setToIf(popRequest)(dispatcher.downRequests.tail)
-    }
-    ???
-  }
+//  def step(dispatcher: Dispatcher): Dispatcher = {
+//    val stepped = dispatcher.elevator.direction match {
+//      case Idle =>
+//        val maybeUp = dispatcher.upRequests.headOption
+//        val maybeDown = dispatcher.downRequests.headOption
+//        (maybeDown, maybeUp) match {
+//          case (Some(down), None) => dispatcher.
+//          case (None, Some(up)) => ???
+//          case (Some(down), Some(up)) => ???
+//          case _ => dispatcher
+//        }
+//      case Up =>
+//        val nextFloor: Floor = dispatcher.elevator.floor + 1
+//        val popRequest = dispatcher.upRequests.headOption.collect{
+//          case PickupRequest(_, FloorDestination(dest)) if dest == nextFloor => true
+//        }.exists(identity)
+//        dispatcher.modify(_.elevator.floor).setTo(nextFloor).
+//        modify(_.upRequests).setToIf(popRequest)(dispatcher.upRequests.tail)
+//      case Down =>
+//        val nextFloor: Floor = dispatcher.elevator.floor - 1
+//        val popRequest = dispatcher.downRequests.headOption.collect {
+//          case PickupRequest(_, FloorDestination(dest)) if dest == nextFloor => true
+//        }.exists(identity)
+//        dispatcher.modify(_.elevator.floor).setTo(nextFloor).
+//          modify(_.downRequests).setToIf(popRequest)(dispatcher.downRequests.tail)
+//    }
+//    ???
+//  }
 }
