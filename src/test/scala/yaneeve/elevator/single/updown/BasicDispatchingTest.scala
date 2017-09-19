@@ -25,10 +25,20 @@ object BasicDispatchingTest extends TestSuite {
       alg.receiveFloorRequest(elevator, HighestFloor) ==> elevatorDispatchedToHighestFloor
       val elevatorGearingUpToMove = elevatorDispatchedToHighestFloor.copy(direction = Up)
       alg.step(elevatorDispatchedToHighestFloor) ==> elevatorGearingUpToMove
-      alg.step(elevatorGearingUpToMove) ==> elevatorGearingUpToMove.copy(currentFloor = GroundFloor + 1)
-//      alg.dispatch(elevator, PickupRequest(InitialPickupRequest(HighestFloor, Down), FloorDestination(HighestFloor - 3)))
-//      val step1 = alg.step(elevator)
-//      step1.elevator.floor ==> GroundFloor + 1
+      val elevatorHasMovedUp = elevatorGearingUpToMove.copy(currentFloor = GroundFloor + 1)
+      alg.step(elevatorGearingUpToMove) ==> elevatorHasMovedUp
+      val movedUpTo32 = (1 until 32).foldLeft(elevatorHasMovedUp){ case (elev, _) => alg.step(elev)}
+      movedUpTo32 ==> elevatorHasMovedUp.copy(currentFloor = 32)
+      alg.receiveFloorRequest(movedUpTo32, 32) ==> movedUpTo32
+      val withTravelDownReq = movedUpTo32.copy(travelDownRequests = Set(30))
+      alg.receiveFloorRequest(movedUpTo32, 30) ==> withTravelDownReq
+      val aStopOn34Scheduled = withTravelDownReq.copy(travelUpRequests = withTravelDownReq.travelUpRequests + 34)
+      alg.receiveFloorRequest(withTravelDownReq, 34) ==> aStopOn34Scheduled
+      val movedTo33 = aStopOn34Scheduled.copy(currentFloor = 33)
+      alg.step(aStopOn34Scheduled) ==> movedTo33
+      val movedTo34 = movedTo33.copy(currentFloor = 34, travelUpRequests = movedTo33.travelUpRequests.filterNot(_ == 34))
+      alg.step(movedTo33) ==> movedTo34
+      alg.step(movedTo34) ==> movedTo34.copy(currentFloor = 35)
     }
   }
 }

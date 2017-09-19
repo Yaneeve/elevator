@@ -4,6 +4,7 @@ package single.updown
 import com.softwaremill.quicklens._
 
 import scala.collection.SortedSet
+import scala.util.Try
 /**
   * Created by yaneeve on 9/18/17.
   */
@@ -35,15 +36,21 @@ class BasicElevatorAlgorithm {//extends DispatchAlgorithm {
   def step(elevator: Elevator): Elevator = {
     elevator.direction match {
       case Idle =>
-        val closestDownFloor = (Set(elevator.currentFloor) ++ elevator.travelDownRequests).max
-        val closestUpFloor = (Set(elevator.currentFloor) ++ elevator.travelUpRequests).min
-        val distanceDown = elevator.currentFloor - closestDownFloor
-        val distanceUp = closestUpFloor - elevator.currentFloor
-        if (distanceDown < distanceUp) elevator.copy(direction = Down)
-        else if (distanceUp < distanceDown) elevator.copy(direction = Up)
-        else if (distanceUp == 0) elevator
-        else if (elevator.travelUpRequests.size > elevator.travelDownRequests.size) elevator.copy(direction = Up)
-        else elevator.copy(direction = Down)
+        val closestDownFloor = Try(elevator.travelDownRequests.max).toOption
+        val closestUpFloor = Try(elevator.travelUpRequests.min).toOption
+        val distanceDown = closestDownFloor.map(elevator.currentFloor - _)
+        val distanceUp = closestUpFloor.map(_ - elevator.currentFloor)
+        (distanceUp, distanceDown) match {
+          case (Some(up), Some(down)) =>
+            if (down < up) elevator.copy(direction = Down)
+            else if (up < down) elevator.copy(direction = Up)
+            else if (elevator.travelUpRequests.size > elevator.travelDownRequests.size) elevator.copy(direction = Up)
+            else elevator.copy(direction = Down)
+          case (Some(up), _) => elevator.copy(direction = Up)
+          case (_, Some(down)) => elevator.copy(direction = Down)
+          case _ => elevator
+        }
+
       case Up =>
         val nextFloor = elevator.currentFloor + 1
         val stopSet = elevator.travelUpRequests.filterNot(_ == nextFloor)
