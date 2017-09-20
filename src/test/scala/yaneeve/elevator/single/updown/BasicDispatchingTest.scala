@@ -2,7 +2,6 @@ package yaneeve.elevator
 package single.updown
 
 import utest._
-//import yaneeve.elevator.ElevatorState
 
 /**
   * Created by yaneeve on 9/18/17.

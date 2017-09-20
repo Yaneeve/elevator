@@ -57,16 +57,20 @@ class NearestCarElevatorControlAlgorithm extends ElevatorControlAlgorithm {
       FSCalc(elevatorId, fs, callDirection)
     }
 
-    val (request, dequeued) = elevators.unallocatedRequests.dequeue
-    val andTheWinnerIs = elevators.elevators.map{ case (id, elevator) =>
-      calculateFS(elevator, id, request)
-    }.max(Ordering.by[FSCalc, Int](_.fs))
-    val chosenElevator = elevators.elevators(andTheWinnerIs.elevatorId)
-    val chosenAllocatedElevator = andTheWinnerIs.directionToCall match {
-      case Up => chosenElevator.copy(travelUpRequests = chosenElevator.travelUpRequests + request.floor)
-      case _ => chosenElevator.copy(travelDownRequests = chosenElevator.travelDownRequests + request.floor)
-    }
-    elevators.copy(elevators = elevators.elevators + (andTheWinnerIs.elevatorId -> chosenAllocatedElevator))
+    if (elevators.unallocatedRequests.nonEmpty) {
+      val (request, dequeued) = elevators.unallocatedRequests.dequeue
+      val andTheWinnerIs = elevators.elevators.map { case (id, elevator) =>
+        calculateFS(elevator, id, request)
+      }.max(Ordering.by[FSCalc, Int](_.fs))
+      val chosenElevator = elevators.elevators(andTheWinnerIs.elevatorId)
+      val chosenAllocatedElevator = andTheWinnerIs.directionToCall match {
+        case Up => chosenElevator.copy(travelUpRequests = chosenElevator.travelUpRequests + request.floor)
+        case _ => chosenElevator.copy(travelDownRequests = chosenElevator.travelDownRequests + request.floor)
+      }
+      elevators.copy(
+        unallocatedRequests = dequeued,
+        elevators = elevators.elevators + (andTheWinnerIs.elevatorId -> chosenAllocatedElevator))
+    } else elevators
   }
 
   override def step(elevators: Elevators, singleElevatorAlg: ElevatorAlgorithm): Elevators = {

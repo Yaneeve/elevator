@@ -8,7 +8,7 @@ import scala.collection.immutable.Queue
 case class Elevators(elevators: Map[Id, Elevator], unallocatedRequests: Queue[PickupRequest])
 
 object Elevators {
-  def apply(elevators: Seq[Elevator], unallocatedRequests: Queue[PickupRequest]): Elevators =
+  def apply(elevators: Seq[Elevator], unallocatedRequests: Queue[PickupRequest] = Queue.empty): Elevators =
     Elevators(elevators.zipWithIndex.map(_.swap).toMap, unallocatedRequests)
 }
 
