@@ -40,5 +40,38 @@ object BasicDispatchingTest extends TestSuite {
       alg.step(movedTo33) ==> movedTo34
       alg.step(movedTo34) ==> movedTo34.copy(currentFloor = 35)
     }
+
+    'second - {
+      val elevator = Elevator(12, Down, travelUpRequests = Set(15,17), travelDownRequests = Set(9))
+      val alg = new BasicElevatorAlgorithm
+      val checkpoint1 = alg.step(
+        alg.step(
+          alg.step(elevator)
+        ))
+      checkpoint1 ==> Elevator(9, Idle, travelUpRequests = Set(15, 17), travelDownRequests = Set.empty)
+      val checkpoint2 = alg.step(checkpoint1)
+      checkpoint2 ==> Elevator(9, Up, travelUpRequests = Set(15, 17), travelDownRequests = Set.empty)
+      val checkpoint3 = alg.step(checkpoint2)
+      checkpoint3 ==> Elevator(10, Up, travelUpRequests = Set(15, 17), travelDownRequests = Set.empty)
+      // so we employed foldLeft in the above test, but would it not have been nice to have a for-comprehension?
+      // TODO, see if we can trandform alg somehow into a Monad with `map` and `flatMap` methods
+      val checkpoint4 = alg.step(
+        alg.step(
+          alg.step(
+            alg.step(
+              alg.step(
+                alg.step(
+                  alg.step(
+                    alg.step(checkpoint3)
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+      checkpoint4 ==> Elevator(17, Idle)
+
+    }
   }
 }
