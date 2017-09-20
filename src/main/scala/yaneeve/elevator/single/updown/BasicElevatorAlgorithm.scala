@@ -8,7 +8,7 @@ import scala.util.Try
 /**
   * Created by yaneeve on 9/18/17.
   */
-class BasicElevatorAlgorithm {//extends DispatchAlgorithm {
+class BasicElevatorAlgorithm extends ElevatorAlgorithm {
 
   // Let's write the flow in words:
   // An elevator/dispatcher does not know where the destination of a pickup request is
@@ -25,7 +25,7 @@ class BasicElevatorAlgorithm {//extends DispatchAlgorithm {
 
 
 
-  def receiveFloorRequest(elevator: Elevator, floor: Floor): Elevator = {
+  override def receiveFloorRequest(elevator: Elevator, floor: Floor): Elevator = {
     ascertainDirection(elevator.currentFloor, floor) match {
       case Idle => elevator
       case Up => elevator.copy(travelUpRequests = elevator.travelUpRequests + floor)
@@ -33,7 +33,7 @@ class BasicElevatorAlgorithm {//extends DispatchAlgorithm {
     }
   }
 
-  def step(elevator: Elevator): Elevator = {
+  override def step(elevator: Elevator): Elevator = {
     elevator.direction match {
       case Idle =>
         val closestDownFloor = Try(elevator.travelDownRequests.max).toOption

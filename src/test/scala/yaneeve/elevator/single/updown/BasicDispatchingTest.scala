@@ -9,14 +9,6 @@ import utest._
   */
 object BasicDispatchingTest extends TestSuite {
   override val tests: Tests = Tests {
-//    'first - {
-//      val dispatcher = Dispatcher(elevator = ElevatorState(GroundFloor, NoDestination))
-//      val alg = new BasicElevatorAlgorithm
-//      alg.step(dispatcher) ==> dispatcher
-//      alg.dispatch(dispatcher, PickupRequest(InitialPickupRequest(HighestFloor, Down), FloorDestination(HighestFloor - 3)))
-//      val step1 = alg.step(dispatcher)
-//      step1.elevator.floor ==> GroundFloor + 1
-//    }
     'first - {
       val elevator = Elevator()
       val alg = new BasicElevatorAlgorithm
