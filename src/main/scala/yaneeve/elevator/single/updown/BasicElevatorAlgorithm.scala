@@ -17,7 +17,7 @@ class BasicElevatorAlgorithm extends ElevatorAlgorithm {
   // if requests exist in the opposite trajectory they will be served once the travel trajectory set is empty
   // when both sets are empty the elevator would be idle
 
-  // caveat: the elevator capacity is infinite (well bounded by the heap space of the process)
+  // caveat: the elevator capacity is infinite (well.. bounded by the heap space of the process)
 
   // A simplified procedure will be written to code the above flow
 
