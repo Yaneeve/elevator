@@ -11,7 +11,7 @@ import scala.collection.immutable.Queue
   */
 object SingleElevatorDispatchingTest extends TestSuite {
   override val tests: Tests = Tests {
-    'first - {
+    'one - {
       val elevators = Elevators(Seq(Elevator()))
       val algForSingle = new BasicElevatorAlgorithm
       val alg = new NearestCarElevatorControlAlgorithm(algForSingle)
@@ -39,11 +39,11 @@ object SingleElevatorDispatchingTest extends TestSuite {
           PickupRequest(45, Down),
           PickupRequest(16, Up),
           PickupRequest(35, Up)))
-      val dispatchedMore = (1 to 20).foldLeft(pickups){ case (elevs, _) => alg.dispatch(elevs)}
+      val dispatchedMore = (1 to 20).foldLeft(pickups) { case (elevs, _) => alg.dispatch(elevs) }
       dispatchedMore ==> Elevators(Seq(Elevator(GroundFloor + 32, Up,
         inTravelDirectionRequests = Set(HighestFloor, 35), outOfTravelDirectionRequests = Set(45, 14, 16))))
 
-      val upUp = (1 to 15).foldLeft(dispatchedMore){ case (elevs, _) => alg.step(elevs) }
+      val upUp = (1 to 15).foldLeft(dispatchedMore) { case (elevs, _) => alg.step(elevs) }
       upUp ==> Elevators(Seq(Elevator(GroundFloor + 47, Up,
         inTravelDirectionRequests = Set(HighestFloor), outOfTravelDirectionRequests = Set(45, 14, 16))))
     }

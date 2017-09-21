@@ -1,6 +1,6 @@
 package yaneeve.elevator.multiple.updown
 
-import yaneeve.elevator.single.updown.{ElevatorAlgorithm, PickupRequest}
+import yaneeve.elevator.single.updown.PickupRequest
 
 // Notice that floor requests do not appear in this API. That is since the dispatching is
 // intended to send an elevator to people waiting in the hall, not to people inside the
