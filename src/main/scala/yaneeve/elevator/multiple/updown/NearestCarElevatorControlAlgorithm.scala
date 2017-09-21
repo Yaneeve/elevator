@@ -29,7 +29,7 @@ import yaneeve.elevator.single.updown.{Elevator, ElevatorAlgorithm, PickupReques
 //      This rule will come into effect if the elevator car is idle.
 
 // (Note quora has N being the number of floors in a building - 1: https://www.quora.com/Is-there-any-public-elevator-scheduling-algorithm-standard)
-class NearestCarElevatorControlAlgorithm extends ElevatorControlAlgorithm {
+class NearestCarElevatorControlAlgorithm(singleElevatorAlg: ElevatorAlgorithm) extends ElevatorControlAlgorithm {
 
   override def receivePickupRequest(elevators: Elevators, pickupRequest: PickupRequest): Elevators = {
     elevators.copy(unallocatedRequests = elevators.unallocatedRequests enqueue pickupRequest)
@@ -63,18 +63,19 @@ class NearestCarElevatorControlAlgorithm extends ElevatorControlAlgorithm {
         calculateFS(elevator, id, request)
       }.max(Ordering.by[FSCalc, Int](_.fs))
       val chosenElevator = elevators.elevators(andTheWinnerIs.elevatorId)
-      val chosenAllocatedElevator = (andTheWinnerIs.directionToCall, chosenElevator.direction) match {
-        case (Up, Up) => chosenElevator.copy(inTravelDirectionRequests = chosenElevator.inTravelDirectionRequests + request.floor)
-        case (Down, Down) => chosenElevator.copy(inTravelDirectionRequests = chosenElevator.inTravelDirectionRequests + request.floor)
-        case _ => chosenElevator.copy(outOfTravelDirectionRequests = chosenElevator.outOfTravelDirectionRequests + request.floor)
-      }
+//      val chosenAllocatedElevator = (andTheWinnerIs.directionToCall, chosenElevator.direction) match {
+//        case (Up, Up) => chosenElevator.copy(inTravelDirectionRequests = chosenElevator.inTravelDirectionRequests + request.floor)
+//        case (Down, Down) => chosenElevator.copy(inTravelDirectionRequests = chosenElevator.inTravelDirectionRequests + request.floor)
+//        case _ => chosenElevator.copy(outOfTravelDirectionRequests = chosenElevator.outOfTravelDirectionRequests + request.floor)
+//      }
+val chosenAllocatedElevator = singleElevatorAlg.receivePickupRequest(chosenElevator, request)
       elevators.copy(
         unallocatedRequests = dequeued,
         elevators = elevators.elevators + (andTheWinnerIs.elevatorId -> chosenAllocatedElevator))
     } else elevators
   }
 
-  override def step(elevators: Elevators, singleElevatorAlg: ElevatorAlgorithm): Elevators = {
+  override def step(elevators: Elevators): Elevators = {
     val stepped = elevators.elevators.mapValues(singleElevatorAlg.step)
     elevators.copy(elevators = stepped)
   }

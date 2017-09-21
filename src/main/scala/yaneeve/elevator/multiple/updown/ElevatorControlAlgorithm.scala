@@ -11,5 +11,5 @@ trait ElevatorControlAlgorithm {
 
   def dispatch(elevators: Elevators): Elevators
 
-  def step(elevators: Elevators, singleElevatorAlg: ElevatorAlgorithm): Elevators
+  def step(elevators: Elevators): Elevators
 }
