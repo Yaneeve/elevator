@@ -1,7 +1,7 @@
 package yaneeve.elevator
 package multiple.updown
 
-import yaneeve.elevator.single.updown.{Elevator, ElevatorAlgorithm}
+import yaneeve.elevator.single.updown.{Elevator, ElevatorAlgorithm, PickupRequest}
 
 // from http://www.diva-portal.org/smash/get/diva2:811554/FULLTEXT01.pdf
 // [sic]

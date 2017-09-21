@@ -2,7 +2,7 @@ package yaneeve.elevator
 package multiple.updown
 
 import utest._
-import yaneeve.elevator.single.updown.{BasicElevatorAlgorithm, Elevator}
+import yaneeve.elevator.single.updown.{BasicElevatorAlgorithm, Elevator, PickupRequest}
 
 import scala.collection.immutable.Queue
 
@@ -12,18 +12,21 @@ import scala.collection.immutable.Queue
 object SingleElevatorDispatchingTest extends TestSuite {
   override val tests: Tests = Tests {
     'first - {
-      val elevators = Elevators(Seq(Elevator()))
-      val algForSingle = new BasicElevatorAlgorithm
-      val alg = new NearestCarElevatorControlAlgorithm
-      alg.step(elevators, algForSingle) ==> elevators
-      val requestReceived = alg.receivePickupRequest(elevators, PickupRequest(HighestFloor, Down))
-      requestReceived ==> Elevators(Seq(Elevator()), Queue(PickupRequest(HighestFloor, Down)))
-      alg.step(requestReceived, algForSingle) ==> requestReceived
-      val dispatched = alg.dispatch(requestReceived)
-      dispatched ==> Elevators(Seq(Elevator(GroundFloor, Idle, travelUpRequests = Set(HighestFloor))))
-      val babyStep = alg.step(
-        alg.step(dispatched, algForSingle), algForSingle)
-      babyStep ==> Elevators(Seq(Elevator(GroundFloor + 1, Up, travelUpRequests = Set(HighestFloor))))
+//      val elevators = Elevators(Seq(Elevator()))
+//      val algForSingle = new BasicElevatorAlgorithm
+//      val alg = new NearestCarElevatorControlAlgorithm
+//      alg.step(elevators, algForSingle) ==> elevators
+//      val requestReceived = alg.receivePickupRequest(elevators, PickupRequest(HighestFloor, Down))
+//      requestReceived ==> Elevators(Seq(Elevator()), Queue(PickupRequest(HighestFloor, Down)))
+//      alg.step(requestReceived, algForSingle) ==> requestReceived
+//      val dispatched = alg.dispatch(requestReceived)
+//      dispatched ==> Elevators(Seq(Elevator(GroundFloor, Idle, travelUpRequests = Set(HighestFloor))))
+//      val babyStep = alg.step(
+//        alg.step(dispatched, algForSingle), algForSingle)
+//      babyStep ==> Elevators(Seq(Elevator(GroundFloor + 1, Up, travelUpRequests = Set(HighestFloor))))
+//
+
+
 //      val elevatorDispatchedToHighestFloor = elevator.copy(travelUpRequests = Set(HighestFloor))
 //      alg.receiveFloorRequest(elevator, HighestFloor) ==> elevatorDispatchedToHighestFloor
 //      val elevatorGearingUpToMove = elevatorDispatchedToHighestFloor.copy(direction = Up)

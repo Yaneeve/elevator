@@ -1,7 +1,7 @@
 package yaneeve.elevator.multiple.updown
 
-import yaneeve.elevator.{Direction, Floor}
-import yaneeve.elevator.single.updown.Elevator
+import yaneeve.elevator.Direction
+import yaneeve.elevator.single.updown.{Elevator, PickupRequest}
 
 import scala.collection.immutable.Queue
 
@@ -11,7 +11,5 @@ object Elevators {
   def apply(elevators: Seq[Elevator], unallocatedRequests: Queue[PickupRequest] = Queue.empty): Elevators =
     Elevators(elevators.zipWithIndex.map(_.swap).toMap, unallocatedRequests)
 }
-
-case class PickupRequest(floor: Floor, direction: Direction)
 
 case class FSCalc(elevatorId: Id, fs: Int, directionToCall: Direction)

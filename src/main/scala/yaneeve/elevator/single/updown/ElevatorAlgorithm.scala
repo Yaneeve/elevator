@@ -9,5 +9,7 @@ trait ElevatorAlgorithm {
 
   def receiveFloorRequest(elevator: Elevator, floor: Floor): Elevator
 
+  def receivePickupRequest(elevator: Elevator, pickupRequest: PickupRequest): Elevator
+
   def step(elevator: Elevator): Elevator
 }
