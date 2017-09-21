@@ -6,7 +6,7 @@ import utest._
 /**
   * Created by yaneeve on 9/18/17.
   */
-object BasicDispatchingTest extends TestSuite {
+object BasicElevatorTest extends TestSuite {
   override val tests: Tests = Tests {
     'validation1 - {
       intercept[IllegalArgumentException](

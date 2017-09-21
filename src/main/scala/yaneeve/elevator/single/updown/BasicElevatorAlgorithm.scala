@@ -44,12 +44,14 @@ class BasicElevatorAlgorithm extends ElevatorAlgorithm {
         case Down => elevator.copy(direction = Down, travelDownRequests = Set(pickupRequest.floor))
       }
     } else {
-      (elevator.direction, ascertainDirection(elevator.currentFloor, pickupRequest.floor)) match {
-        case (_, Idle) => elevator
-        case (Up, Up) => elevator.copy(travelUpRequests = elevator.travelUpRequests + pickupRequest.floor)
-        case (Down, Down) => elevator.copy(travelDownRequests = elevator.travelDownRequests + pickupRequest.floor)
-        case (Up | Down, _) => elevator.copy(outOfTravelDirectionRequests = elevator.outOfTravelDirectionRequests + pickupRequest.floor)
-        case (Idle, _) => // this is unreachable code that the compiler is unaware of
+      (elevator.direction, ascertainDirection(elevator.currentFloor, pickupRequest.floor), pickupRequest.direction) match {
+        case (_, Idle, _) => elevator
+        case (Up, Up, Up) => elevator.copy(travelUpRequests = elevator.travelUpRequests + pickupRequest.floor)
+        case (Up, Up, Down) if elevator.travelUpRequests.isEmpty => elevator.copy(travelUpRequests = elevator.travelUpRequests + pickupRequest.floor)
+        case (Down, Down, Down) => elevator.copy(travelDownRequests = elevator.travelDownRequests + pickupRequest.floor)
+        case (Down, Down, Up)  if elevator.travelDownRequests.isEmpty => elevator.copy(travelDownRequests = elevator.travelDownRequests + pickupRequest.floor)
+        case (Up | Down, _, _) => elevator.copy(outOfTravelDirectionRequests = elevator.outOfTravelDirectionRequests + pickupRequest.floor)
+        case (Idle, _, _) => // this is unreachable code that the compiler is unaware of
           elevator
       }
     }
