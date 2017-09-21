@@ -63,9 +63,10 @@ class NearestCarElevatorControlAlgorithm extends ElevatorControlAlgorithm {
         calculateFS(elevator, id, request)
       }.max(Ordering.by[FSCalc, Int](_.fs))
       val chosenElevator = elevators.elevators(andTheWinnerIs.elevatorId)
-      val chosenAllocatedElevator = andTheWinnerIs.directionToCall match {
-        case Up => chosenElevator.copy(travelUpRequests = chosenElevator.travelUpRequests + request.floor)
-        case _ => chosenElevator.copy(travelDownRequests = chosenElevator.travelDownRequests + request.floor)
+      val chosenAllocatedElevator = (andTheWinnerIs.directionToCall, chosenElevator.direction) match {
+        case (Up, Up) => chosenElevator.copy(inTravelDirectionRequests = chosenElevator.inTravelDirectionRequests + request.floor)
+        case (Down, Down) => chosenElevator.copy(inTravelDirectionRequests = chosenElevator.inTravelDirectionRequests + request.floor)
+        case _ => chosenElevator.copy(outOfTravelDirectionRequests = chosenElevator.outOfTravelDirectionRequests + request.floor)
       }
       elevators.copy(
         unallocatedRequests = dequeued,

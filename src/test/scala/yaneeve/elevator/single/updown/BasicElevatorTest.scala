@@ -10,17 +10,13 @@ object BasicElevatorTest extends TestSuite {
   override val tests: Tests = Tests {
     'validation1 - {
       intercept[IllegalArgumentException](
-        Elevator(travelDownRequests = Set(1)))
+        Elevator(inTravelDirectionRequests = Set(1)))
     }
     'validation2 - {
       intercept[IllegalArgumentException](
-        Elevator(travelUpRequests = Set(1)))
-    }
-    'validation3 - {
-      intercept[IllegalArgumentException](
         Elevator(outOfTravelDirectionRequests = Set(1)))
     }
-    'validation4 - {
+    'validation3 - {
       val elevator = Elevator()
       val alg = new BasicElevatorAlgorithm
       intercept[IllegalArgumentException](
@@ -41,14 +37,14 @@ object BasicElevatorTest extends TestSuite {
       val alg = new BasicElevatorAlgorithm
       alg.step(elevator) ==> elevator
       val pickupRequestIssued = alg.receivePickupRequest(elevator, PickupRequest(HighestFloor, Down))
-      pickupRequestIssued ==> Elevator(direction = Up, travelUpRequests = Set(HighestFloor))
+      pickupRequestIssued ==> Elevator(direction = Up, inTravelDirectionRequests = Set(HighestFloor))
       val firstMove = alg.step(pickupRequestIssued)
-      firstMove ==> Elevator(currentFloor = GroundFloor + 1, direction = Up,travelUpRequests = Set(HighestFloor) )
+      firstMove ==> Elevator(currentFloor = GroundFloor + 1, direction = Up,inTravelDirectionRequests = Set(HighestFloor) )
       val bookedRequests = alg.receivePickupRequest(
         alg.receivePickupRequest(firstMove, PickupRequest(32, Up)), PickupRequest(16, Down)
       )
       bookedRequests ==> Elevator(currentFloor = GroundFloor + 1, direction = Up,
-        travelUpRequests = Set(HighestFloor, 32), outOfTravelDirectionRequests = Set(16))
+        inTravelDirectionRequests = Set(HighestFloor, 32), outOfTravelDirectionRequests = Set(16))
 //      val elevatorDispatchedToHighestFloor = elevator.copy(travelUpRequests = Set(HighestFloor))
 //      alg.receiveFloorRequest(elevator, HighestFloor) ==> elevatorDispatchedToHighestFloor
 //      val elevatorGearingUpToMove = elevatorDispatchedToHighestFloor.copy(direction = Up)

@@ -25,8 +25,8 @@ class BasicElevatorAlgorithm extends ElevatorAlgorithm {
   override def receiveFloorRequest(elevator: Elevator, floor: Floor): Elevator = {
     require(elevator.direction != Idle, "cannot receive a floor request on a non-booked elevator")
     (ascertainDirection(elevator.currentFloor, floor), elevator.direction) match {
-      case (Up, Up) => elevator.copy(travelUpRequests = elevator.travelUpRequests + floor)
-      case (Down, Down) => elevator.copy(travelDownRequests = elevator.travelDownRequests + floor)
+      case (Up, Up) => elevator.copy(inTravelDirectionRequests = elevator.inTravelDirectionRequests + floor)
+      case (Down, Down) => elevator.copy(inTravelDirectionRequests = elevator.inTravelDirectionRequests + floor)
       case (Up | Down, _) => elevator.copy(outOfTravelDirectionRequests = elevator.outOfTravelDirectionRequests + floor)
       case (Idle, _) => elevator
     }
@@ -40,16 +40,18 @@ class BasicElevatorAlgorithm extends ElevatorAlgorithm {
     if (elevator.direction == Idle) {
       ascertainDirection(elevator.currentFloor, pickupRequest.floor) match {
         case Idle => elevator
-        case Up => elevator.copy(direction = Up, travelUpRequests = Set(pickupRequest.floor))
-        case Down => elevator.copy(direction = Down, travelDownRequests = Set(pickupRequest.floor))
+        case Up => elevator.copy(direction = Up, inTravelDirectionRequests = Set(pickupRequest.floor))
+        case Down => elevator.copy(direction = Down, inTravelDirectionRequests = Set(pickupRequest.floor))
       }
     } else {
       (elevator.direction, ascertainDirection(elevator.currentFloor, pickupRequest.floor), pickupRequest.direction) match {
         case (_, Idle, _) => elevator
-        case (Up, Up, Up) => elevator.copy(travelUpRequests = elevator.travelUpRequests + pickupRequest.floor)
-        case (Up, Up, Down) if elevator.travelUpRequests.isEmpty => elevator.copy(travelUpRequests = elevator.travelUpRequests + pickupRequest.floor)
-        case (Down, Down, Down) => elevator.copy(travelDownRequests = elevator.travelDownRequests + pickupRequest.floor)
-        case (Down, Down, Up)  if elevator.travelDownRequests.isEmpty => elevator.copy(travelDownRequests = elevator.travelDownRequests + pickupRequest.floor)
+        case (Up, Up, Up) => elevator.copy(inTravelDirectionRequests = elevator.inTravelDirectionRequests + pickupRequest.floor)
+        case (Up, Up, Down) if elevator.inTravelDirectionRequests.isEmpty => // seems as if this should not happen
+          elevator.copy(inTravelDirectionRequests = elevator.inTravelDirectionRequests + pickupRequest.floor)
+        case (Down, Down, Down) => elevator.copy(inTravelDirectionRequests = elevator.inTravelDirectionRequests + pickupRequest.floor)
+        case (Down, Down, Up) if elevator.inTravelDirectionRequests.isEmpty => // seems as if this should not happen
+          elevator.copy(inTravelDirectionRequests = elevator.inTravelDirectionRequests + pickupRequest.floor)
         case (Up | Down, _, _) => elevator.copy(outOfTravelDirectionRequests = elevator.outOfTravelDirectionRequests + pickupRequest.floor)
         case (Idle, _, _) => // this is unreachable code that the compiler is unaware of
           elevator
@@ -62,12 +64,12 @@ class BasicElevatorAlgorithm extends ElevatorAlgorithm {
       case Idle => elevator
       case Up =>
         val nextFloor = elevator.currentFloor + 1
-        val stopSet = elevator.travelUpRequests.filterNot(_ == nextFloor)
-        val partial = elevator.copy(travelUpRequests = stopSet, currentFloor = nextFloor)
-        if (partial.travelUpRequests.isEmpty) {
-          if (partial.outOfTravelDirectionRequests.nonEmpty || partial.travelDownRequests.nonEmpty) {
+        val stopSet = elevator.inTravelDirectionRequests.filterNot(_ == nextFloor)
+        val partial = elevator.copy(inTravelDirectionRequests = stopSet, currentFloor = nextFloor)
+        if (partial.inTravelDirectionRequests.isEmpty) {
+          if (partial.outOfTravelDirectionRequests.nonEmpty) {
             partial.copy(direction = Down,
-              travelDownRequests = partial.travelDownRequests ++ partial.outOfTravelDirectionRequests,
+              inTravelDirectionRequests = partial.outOfTravelDirectionRequests,
               outOfTravelDirectionRequests = Set.empty)
           } else {
             partial.copy(direction = Idle)
@@ -75,46 +77,17 @@ class BasicElevatorAlgorithm extends ElevatorAlgorithm {
         } else partial
       case Down =>
         val nextFloor = elevator.currentFloor - 1
-        val stopSet = elevator.travelUpRequests.filterNot(_ == nextFloor)
-        val partial = elevator.copy(travelDownRequests = stopSet, currentFloor = nextFloor)
-        if (partial.travelDownRequests.isEmpty) {
-          if (partial.outOfTravelDirectionRequests.nonEmpty || partial.travelUpRequests.nonEmpty) {
+        val stopSet = elevator.inTravelDirectionRequests.filterNot(_ == nextFloor)
+        val partial = elevator.copy(inTravelDirectionRequests = stopSet, currentFloor = nextFloor)
+        if (partial.inTravelDirectionRequests.isEmpty) {
+          if (partial.outOfTravelDirectionRequests.nonEmpty) {
             partial.copy(direction = Up,
-              travelDownRequests = partial.travelDownRequests ++ partial.outOfTravelDirectionRequests,
+              inTravelDirectionRequests = partial.outOfTravelDirectionRequests,
               outOfTravelDirectionRequests = Set.empty)
           } else {
             partial.copy(direction = Idle)
           }
         } else partial
-      //                modify(_.direction).setToIf(stopSet.isEmpty)(Idle)
     }
-    //    elevator.direction match {
-    //      case Idle =>
-    //        val closestDownFloor = Try(elevator.travelDownRequests.max).toOption
-    //        val closestUpFloor = Try(elevator.travelUpRequests.min).toOption
-    //        val distanceDown = closestDownFloor.map(elevator.currentFloor - _)
-    //        val distanceUp = closestUpFloor.map(_ - elevator.currentFloor)
-    //        (distanceUp, distanceDown) match {
-    //          case (Some(up), Some(down)) =>
-    //            if (down < up) elevator.copy(direction = Down)
-    //            else if (up < down) elevator.copy(direction = Up)
-    //            else if (elevator.travelUpRequests.size > elevator.travelDownRequests.size) elevator.copy(direction = Up)
-    //            else elevator.copy(direction = Down)
-    //          case (Some(up), _) => elevator.copy(direction = Up)
-    //          case (_, Some(down)) => elevator.copy(direction = Down)
-    //          case _ => elevator
-    //        }
-    //
-    //      case Up =>
-    //        val nextFloor = elevator.currentFloor + 1
-    //        val stopSet = elevator.travelUpRequests.filterNot(_ == nextFloor)
-    //        elevator.copy(travelUpRequests = stopSet, currentFloor = nextFloor).
-    //          modify(_.direction).setToIf(stopSet.isEmpty)(Idle)
-    //      case Down =>
-    //        val nextFloor = elevator.currentFloor - 1
-    //        val stopSet = elevator.travelDownRequests.filterNot(_ == nextFloor)
-    //        elevator.copy(travelDownRequests = stopSet, currentFloor = nextFloor).
-    //          modify(_.direction).setToIf(stopSet.isEmpty)(Idle)
-    //    }
   }
 }
