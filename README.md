@@ -39,11 +39,16 @@ I gather from the previous challenges that a usual 4 hours is given to the task,
  - I modify the API suggested in the original challenge to be IMO more functional
    This [blog post](https://underscore.io/blog/posts/2017/06/02/uniting-church-and-state.html) explains that 
 >   The Church encoding gives us a way to relate the OO and FP representation.
+ - I have put aside volume considerations and thus the amount of people using the elevators have been dropped
+ - I would like to split the request into direction (up/down) and then to floor. This seems more 
+  realistic in the simple scenario
+ - I have not implemented a FCFS algorithm
+ - I would have liked to have gone into the more challenging destination control scenario where a person requests a specific floor and not a direction. But under the time constraints I have not done so
+ - The API is synchronous, but could have been elaborated on
+ - There is no main file to run, but a (partial) test suite
  - I would like to propose that an elevator has a state and a function on that state produces
  and elevator within the same or a different state. I wonder if a state monad might help or obstruct the design
- - A trivial one: I would like to split the request into direction (up/down) and then to floor. This seems more 
- realistic in the simple scenario - I think I have succeeded doing that.
- - I have put aside volume considerations and thus the amount of people using the elevators have been dropped
- - The amount of work that had gone into this had been in the ballpark of 10 net hours, putting aside the research
+ - I am not a huge fan of `Exception`s and the `require` function, but I used them anyway.
+ - The amount of work that had gone into this had been in the ballpark of 10 net hours
  - a full git log shows the transformation of ideas into the present design
                                           
