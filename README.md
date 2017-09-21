@@ -14,10 +14,10 @@ _But_ I could not immediately figure out how to reduce the problem of several ca
 Also, the shortest paths mentioned above did not immediately map into my problem domain with elegance.
 
 As such, as many have done before me, I googled up the challenge itself and found a treasure trove of information and github repos,
-  in one langauge or another attempting to solve the same problem.
+  in one language or another attempting to solve the same problem.
   One that stood out was https://github.com/sitano/mesosphere-elevator.
   Another was https://github.com/allquantor/mesosphere-challenge.
-  Yet another was _**???**_
+  Yet another was https://github.com/adamkennedy/Mesovator
   
 While I could not exactly reduce my problem to the traveling salesman. Some claimed that the problem is reducible to
 https://en.wikipedia.org/wiki/Job_shop_scheduling. Some to [time-dependent traveling salesman](http://www.sciencedirect.com/science/article/pii/S1572528608000339)
@@ -25,15 +25,15 @@ What all these links linked to was the realization that:
 There is no best algorithm! _And_ the usage pattern of the elevator would determine the choice of optimization.
 (See: http://webcache.googleusercontent.com/search?q=cache:http://www.columbia.edu/~cs2035/courses/ieor4405.S13/p14.pdf).
 Heuristics were then proposed such as: https://en.wikipedia.org/wiki/Ant_colony_optimization_algorithms
-Or genetic algorithms.
+Or genetic algorithms. It seems to me that only the destination control systems would be applicable to reduction to the aforementioned
+routing/scheduling algorithms. I have unfortunately not managed to get there 
 
-Therefore, I have decided to implement a plugable design where one routing algorithm could be substituted for another.
-Also, I will implement just a naive subset of these algorithms. I then wish to explore the asynchronous nature of elevator
-communication with the controller and see if the added complexity makes a real difference in implementation.
+I have implemented just a small naive subset of these algorithms. More specifically the "Elevator Algorithm" for a single elevator
+and the "Nearest Car" algorithm for multiple elevators.
 
 I gather from the previous challenges that a usual 4 hours is given to the task, and that other coders have also not counted the 
  research time and preamble writing as part of the 4. I will try to log what I had been able to complete in 4 hours. I will also try to
- log the complete amount of time I spent on the project
+ log the complete amount of time I spent on the project.
 
 ## notes
  - I modify the API suggested in the original challenge to be IMO more functional
@@ -42,18 +42,8 @@ I gather from the previous challenges that a usual 4 hours is given to the task,
  - I would like to propose that an elevator has a state and a function on that state produces
  and elevator within the same or a different state. I wonder if a state monad might help or obstruct the design
  - A trivial one: I would like to split the request into direction (up/down) and then to floor. This seems more 
- realistic in the simple scenario
+ realistic in the simple scenario - I think I have succeeded doing that.
+ - I have put aside volume considerations and thus the amount of people using the elevators have been dropped
+ - The amount of work that had gone into this had been in the ballpark of 10 net hours, putting aside the research
+ - a full git log shows the transformation of ideas into the present design
                                           
-
- 
- 
-## tasks
-- [ ] single elevator
-    - [ ] FCFS, First Come First Served
-    - [ ] SSF, Shortest Seek First or Nearest Car
-    - [ ] SSF but try to avoid starvation
-- [ ] multiple elevators
-    - [ ] Simple up/down buttons
-    - [ ] dispatcher (enter floor while requesting an elavator)
-    - [ ] async
-    - [ ] akka

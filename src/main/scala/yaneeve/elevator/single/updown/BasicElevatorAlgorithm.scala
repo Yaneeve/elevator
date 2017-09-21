@@ -10,8 +10,7 @@ class BasicElevatorAlgorithm extends ElevatorAlgorithm {
   // An elevator/dispatcher does not know where the destination of a pickup request is
   // An elevator knows if the request originates above or below it
   // An elevator knows if the request is to move up or down
-  // An elevator should add the floor of the pickup request to its serving set
-  // In essence a pickup request is the same as a carry request - adding a floor to the set of floors that must be served
+  // An elevator should add the floor of the pickup request to its serving set if it is ahead of it in its travel trajectory
   // If an elevator is idle, the first request that comes in is the one that sets the direction
   // hence forward all onboard requests/or pickup requests in the trajectory of travel should be served until no more exist
   // if requests exist in the opposite trajectory they will be served once the travel trajectory set is empty
